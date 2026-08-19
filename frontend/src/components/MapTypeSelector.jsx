@@ -1,0 +1,72 @@
+import { useState } from 'react';
+import { useT } from '../i18n';
+
+const MapTypeSelector = ({ onMapTypeChange, selectedType = 'roadmap', className = '' }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const t = useT();
+
+    const handleTypeChange = (type) => {
+        onMapTypeChange(type);
+        setIsOpen(false);
+    };
+
+    const getDisplayName = (type) => {
+        switch(type) {
+            case 'roadmap':   return t('map_map');
+            case 'satellite': return t('map_satellite');
+            case 'terrain':   return t('map_terrain');
+            case 'heatmap':   return t('map_heatmap');
+            default: return type;
+        }
+    };
+
+    return (
+        <div
+            className={`map-type-selector${className ? ` ${className}` : ''}`}
+            onMouseEnter={() => setIsOpen(true)}
+            onMouseLeave={() => setIsOpen(false)}
+        >
+            <button
+                className={`map-type-main ${isOpen ? 'open' : ''}`}
+                aria-haspopup="listbox"
+                aria-expanded={isOpen}
+                onClick={() => setIsOpen(v => !v)}
+            >
+                <span className="map-type-icon" aria-hidden="true"></span>
+                <span className="map-type-label">{getDisplayName(selectedType)}</span>
+                <span className="map-type-chevron" aria-hidden="true"></span>
+            </button>
+            {isOpen && (
+                <div className="map-type-dropdown">
+                    <button
+                        className={`map-type-option ${selectedType === 'roadmap' ? 'active' : ''}`}
+                        onClick={() => handleTypeChange('roadmap')}
+                    >
+                        {t('map_map')}
+                    </button>
+                    <button
+                        className={`map-type-option ${selectedType === 'satellite' ? 'active' : ''}`}
+                        onClick={() => handleTypeChange('satellite')}
+                    >
+                        {t('map_satellite')}
+                    </button>
+
+                    <button
+                        className={`map-type-option ${selectedType === 'terrain' ? 'active' : ''}`}
+                        onClick={() => handleTypeChange('terrain')}
+                    >
+                        {t('map_terrain')}
+                    </button>
+                    <button
+                        className={`map-type-option ${selectedType === 'heatmap' ? 'active' : ''}`}
+                        onClick={() => handleTypeChange('heatmap')}
+                    >
+                        {t('map_heatmap')}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default MapTypeSelector;

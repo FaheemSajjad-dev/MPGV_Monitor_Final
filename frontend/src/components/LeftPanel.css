@@ -1,0 +1,522 @@
+/* ── Left control panel ── */
+.left-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 1001;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  pointer-events: none;
+  --range-card-gap: 12px;
+  --range-card-width: 108px;
+  --range-card-height: 480px;
+}
+
+/* Sliding drawer that clips content when collapsing */
+.left-panel__drawer {
+  max-width: var(--left-panel-width);
+  width: var(--left-panel-width);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  transition: max-width 0.25s ease;
+  pointer-events: all;
+  flex-shrink: 0;
+}
+
+.left-panel--collapsed .left-panel__drawer {
+  max-width: 0;
+}
+
+/* Slider and scale fade in sync with the drawer; visibility hides them fully after fade completes */
+.left-panel .time-window-slider-container.vertical,
+.left-panel .magnitude-scale.vertical {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease, visibility 0s linear 0s;
+}
+
+.left-panel--collapsed .time-window-slider-container.vertical,
+.left-panel--collapsed .magnitude-scale.vertical {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+/* White card body */
+.left-panel__body {
+  width: var(--left-panel-width);
+  height: 100%;
+  min-height: 0;
+  background: #fff;
+  box-shadow: 3px 0 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.45dvh, 16px);
+  padding: calc(var(--safe-top) + clamp(12px, 1.45dvh, 16px)) 14px calc(var(--safe-bottom) + clamp(12px, 1.45dvh, 16px)) calc(var(--safe-left) + 14px);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Section grouping */
+.left-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 0 0 auto;
+}
+
+.left-panel__range-controls {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  pointer-events: none;
+  --range-card-height: min(560px, calc(100% - 70px));
+  --range-card-offset: max(8px, calc((100% - 54px - var(--range-card-height)) / 2));
+  --range-label-gap: 8px;
+  --range-label-height: 18px;
+}
+
+.left-panel__scale-row {
+  position: absolute;
+  top: var(--range-card-offset);
+  left: 0;
+  right: 0;
+  height: var(--range-card-height);
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  pointer-events: none;
+  container-type: size;
+}
+
+/* Fixed-width panel, vertical scales. Both cards render as matching visual
+   windows inside the content column: time is rotated, magnitude is native. */
+.left-panel .time-window-slider-container.vertical {
+  width: 100cqh;
+  min-width: 100cqh;
+  max-width: 100cqh;
+  height: var(--range-card-width);
+  min-height: var(--range-card-width);
+  max-height: var(--range-card-width);
+  left: calc((var(--range-card-width) - 100cqh) / 2);
+  top: calc((100cqh - var(--range-card-width)) / 2);
+  transform: rotate(-90deg);
+  transform-origin: center center;
+  box-sizing: border-box;
+}
+
+.left-panel .magnitude-scale.vertical {
+  right: auto;
+  left: calc(100% - var(--range-card-width));
+  top: 0;
+  height: 100%;
+  transform: none;
+  pointer-events: all;
+}
+.left-panel .time-window-slider-container.vertical,
+.left-panel .magnitude-scale.vertical {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.left-panel .time-window-slider-container.vertical .vertical-letter-label,
+.left-panel .time-window-slider-container.vertical .year-label,
+.left-panel .time-window-slider-container.vertical .day-label,
+.left-panel .time-window-slider-container.vertical .month-label,
+.left-panel .magnitude-scale.vertical .scale-letter-label,
+.left-panel .magnitude-scale.vertical .magnitude-tick-label,
+.left-panel .magnitude-scale.vertical .current-filter,
+.left-panel__scale-row > .selected-date-below,
+.left-panel__range-help {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.82);
+}
+.left-panel .time-window-slider-container.vertical .zoom-indicator {
+  display: none;
+}
+
+.left-panel .time-window-slider-container.vertical .vertical-letter-label {
+  right: 6px;
+  top: 57px;
+  transform: translateY(-50%) rotate(90deg);
+  font-size: 15px;
+}
+
+.left-panel__scale-row > .selected-date-below {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100cqh + var(--range-label-gap));
+  height: var(--range-label-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a3a5c;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.left-panel__range-help {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--range-card-offset) + var(--range-card-height) + var(--range-label-gap) + var(--range-label-height) + var(--range-label-gap));
+  min-height: 18px;
+  color: #1a3a5c;
+  font-size: 11px;
+  font-style: italic;
+  line-height: 1.3;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.left-panel__range-controls:has(.timeline-slider:hover) .left-panel__range-help--time,
+.left-panel__range-controls:has(.magnitude-slider:hover) .left-panel__range-help--magnitude {
+  opacity: 1;
+}
+
+/* Small section header label */
+.left-panel__label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #999;
+  user-select: none;
+}
+
+/* Collapse / expand tab on the right edge of the drawer */
+.left-panel__toggle {
+  pointer-events: all;
+  align-self: flex-start;
+  margin-top: 60px;
+  width: 18px;
+  height: 38px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  font-size: 9px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 3px 1px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.left-panel__toggle:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+
+/* ── Colour-mode switch ── */
+.left-panel__body .color-mode-switch {
+  display: flex;
+  background: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.left-panel__body .color-mode-switch button {
+  flex: 1;
+  padding: clamp(3px, 0.45dvh, 4px) 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+  transition: background 0.15s;
+}
+
+.left-panel__body .color-mode-switch button.active {
+  background: #333;
+  color: #fff;
+}
+
+.left-panel__body .color-mode-switch button:hover:not(.active) {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.left-panel__map-actions {
+  pointer-events: all;
+  position: fixed;
+  left: var(--action-rail-left);
+  bottom: var(--action-rail-bottom);
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  gap: var(--action-button-gap);
+  transition: left 0.25s ease;
+}
+
+.left-panel__map-action-btn {
+  width: var(--action-button-size);
+  height: var(--action-button-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(10, 40, 80, 0.18);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #1a3a5c;
+  box-shadow: 0 2px 10px rgba(10, 40, 80, 0.16);
+  cursor: pointer;
+  user-select: none;
+}
+
+.left-panel__map-action-btn:hover {
+  background: #f5f8fb;
+  border-color: rgba(10, 40, 80, 0.30);
+}
+
+.left-panel__map-action-btn:focus,
+.left-panel__map-action-btn:focus-visible {
+  outline: none;
+}
+
+.left-panel__map-action-btn svg {
+  width: 19px;
+  height: 19px;
+}
+
+.about-action svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Language action uses the same visual button as the map actions. */
+.left-panel__map-action-btn--language {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Faults toggle accent colour */
+.faults-toggle input:checked + .slider { background-color: #333; }
+
+/* Volcano/grid toggle rows */
+.left-panel__body .volcano-toggle {
+  background: #f7f7f7;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: clamp(3px, 0.55dvh, 5px) 10px;
+}
+
+@media (max-height: 800px) and (min-width: 768px) {
+  .left-panel__range-controls {
+    --range-card-height: max(0px, calc(100% - 54px));
+    --range-card-offset: 0px;
+  }
+}
+
+@media (max-height: 760px) and (min-width: 768px) {
+  .left-panel__body {
+    gap: 9px;
+    padding-top: calc(var(--safe-top) + 10px);
+    padding-bottom: calc(var(--safe-bottom) + 10px);
+  }
+
+  .left-panel__section {
+    gap: 5px;
+  }
+
+  .left-panel__body .color-mode-switch button {
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
+  .left-panel__body .volcano-toggle {
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+
+}
+
+@media (max-width: 767px) {
+  .left-panel {
+    --range-card-gap: 8px;
+    --range-card-width: 94px;
+    --range-card-height: 405px;
+  }
+
+  .left-panel__drawer {
+    max-width: var(--left-panel-width);
+    width: var(--left-panel-width);
+  }
+
+  .left-panel__body {
+    width: var(--left-panel-width);
+    height: 100%;
+    min-height: 0;
+    gap: 8px;
+    padding: calc(var(--safe-top) + 10px) 9px calc(var(--safe-bottom) + 10px) calc(var(--safe-left) + 9px);
+  }
+
+  .left-panel__section {
+    gap: 5px;
+  }
+
+  .left-panel__label {
+    font-size: 8px;
+    letter-spacing: 0.35px;
+  }
+
+  .left-panel__toggle {
+    width: 16px;
+    height: 34px;
+    margin-top: calc(var(--safe-top) + var(--mobile-top-control-offset));
+    font-size: 8px;
+  }
+
+  .left-panel__body .color-mode-switch {
+    border-radius: 5px;
+  }
+
+  .left-panel__body .color-mode-switch button {
+    padding: 3px 4px;
+    font-size: 9px;
+  }
+
+  .left-panel__body .volcano-toggle {
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+
+  .left-panel__body .switch {
+    width: 32px;
+    height: 18px;
+  }
+
+  .left-panel__body .slider:before {
+    width: 12px;
+    height: 12px;
+  }
+
+  .left-panel__body input:checked + .slider:before {
+    transform: translateX(14px);
+  }
+
+  .left-panel__body .toggle-label {
+    margin-left: 5px;
+    font-size: 9px;
+  }
+
+  .left-panel__body .toggle-label svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .left-panel__body .faults-toggle-icon {
+    width: 10px;
+  }
+
+  .left-panel__event-summary {
+    position: relative;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 2px;
+    padding: 7px 22px 7px 8px;
+    border: 1px solid rgba(74, 111, 165, 0.22);
+    border-left: 3px solid #4a6fa5;
+    border-radius: 6px;
+    background: #f0f4fb;
+    color: #222;
+    font-size: 9px;
+    line-height: 1.35;
+  }
+
+  .left-panel__event-summary p {
+    margin: 0;
+  }
+
+  .left-panel__event-summary strong {
+    color: #222;
+    font-weight: 700;
+  }
+
+  .left-panel__event-summary em {
+    color: #566272;
+  }
+
+  .left-panel__event-summary .left-panel__event-magnitude {
+    color: #4a6fa5;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .left-panel__event-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    padding: 0;
+  }
+
+  .left-panel__event-action {
+    width: auto;
+    margin-top: 6px;
+    padding: 4px 7px;
+    font-size: 8.5px;
+  }
+
+  .left-panel__range-controls {
+    flex: 1 1 auto;
+    min-height: 0;
+    --range-card-height: min(405px, calc(100% - 54px));
+    --range-card-offset: max(0px, calc(100% - 54px - var(--range-card-height)));
+  }
+
+  .left-panel .time-window-slider-container.vertical {
+    width: var(--range-card-height);
+    height: var(--range-card-width);
+    left: calc((var(--range-card-width) - var(--range-card-height)) / 2);
+    top: calc((var(--range-card-height) - var(--range-card-width)) / 2);
+    transform: rotate(-90deg);
+  transform-origin: center center;
+  }
+
+  .left-panel .magnitude-scale.vertical {
+    left: calc(100% - var(--range-card-width));
+    top: 0;
+    transform: none;
+  }
+
+  .left-panel__map-actions {
+    left: var(--action-rail-left);
+    bottom: var(--action-rail-bottom);
+    gap: var(--action-button-gap);
+  }
+
+  .left-panel__map-action-btn {
+    width: var(--action-button-size);
+    height: var(--action-button-size);
+    border-radius: 5px;
+  }
+
+
+  .left-panel__map-action-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+}

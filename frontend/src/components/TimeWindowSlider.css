@@ -1,0 +1,454 @@
+/* Time Window Slider */
+.time-window-slider-container {
+  pointer-events: all; /* re-enable: parent .left-panel has pointer-events:none */
+  background: var(--floating-card-bg, #ffffff);
+  border: var(--floating-card-border, 1px solid rgba(10, 40, 80, 0.14));
+  border-radius: var(--floating-card-radius, 8px);
+  box-shadow: var(--floating-card-shadow, 0 1px 6px rgba(10, 40, 80, 0.09));
+  width: 44%;
+  max-width: 440px;
+  height: fit-content;
+  padding: 8px 18px;
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.timeline-slider {
+  height: 36px;
+  position: relative;
+  width: 100%;
+  overflow: visible;
+}
+
+.timeline-track {
+  cursor: grab;
+  border: 1px solid rgba(30, 80, 130, 0.35);
+  height: 16px;
+  position: absolute;
+  top: 7px;
+  left: 0;
+  right: 0;
+  border-radius: 0px;
+  transition: background-color 0.2s ease;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(10, 40, 80, 0.12);
+  touch-action: none;
+}
+
+.timeline-track:hover {
+  filter: brightness(0.95);
+}
+
+.timeline-track.dragging {
+  cursor: grabbing !important;
+  filter: brightness(0.9);
+  height: 18px;
+  top: 6px;
+  border-color: #1a3a5c;
+}
+
+/* Divider base style */
+.divider {
+  position: absolute;
+  width: 2px;
+  pointer-events: none;
+  transform: translateX(-0.5px);
+  z-index: 5; /* Make dividers appear above the background */
+}
+
+/* Day divider: solid line, matching month thickness */
+.divider.divider-day {
+  background-color: rgba(235, 247, 255, 0.58);
+  box-shadow: 1px 0 0 rgba(7, 24, 44, 0.14);
+  width: 1px;
+  height: 100%;
+  top: 0;
+}
+
+/* Month divider: solid, slightly thicker */
+.divider.divider-month {
+  background-color: rgba(235, 247, 255, 0.78);
+  box-shadow: 1px 0 0 rgba(7, 24, 44, 0.18);
+  width: 1px;
+  height: 100%;
+  top: 0;
+}
+
+/* Year divider: bold 2px line */
+.divider.divider-year {
+  background-color: rgba(245, 251, 255, 0.95);
+  box-shadow: 1px 0 0 rgba(7, 24, 44, 0.22);
+  width: 2px;
+  height: 100%;
+  top: 0;
+  opacity: 1;
+}
+
+.year-labels {
+  position: absolute;
+  width: 100%;
+  top: 26px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.year-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: #1a3a5c;
+  text-align: center;
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+  background-color: none;
+  padding: 0 3px;
+  z-index: 10;
+}
+
+.selected-date {
+  margin-top: 2px;
+  font-weight: 500;
+  font-size: 13px;
+  color: #1a3a5c;
+  letter-spacing: 0.2px;
+  background-color: rgba(200, 225, 245, 0.6);
+  padding: 2px 5px;
+  border-radius: 3px;
+  text-align: center;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+/* Day view specific styles */
+.day-labels {
+  position: absolute;
+  width: 100%;
+  top: 26px;
+  height: 30px;
+  pointer-events: none;
+}
+
+.day-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: #2a5280;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.month-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #1a3a5c;
+  font-weight: 500;
+  pointer-events: none;
+  white-space: nowrap;
+  top: 14px;
+}
+
+/* Zoom indicator tooltip (shows on hover) */
+.zoom-indicator {
+  position: absolute;
+  top: -22px;                 /* above the slider card */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-style: italic;
+  white-space: nowrap;
+  opacity: 0;                 /* hidden by default */
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+/* Show tooltip when hovering the slider area */
+.timeline-slider:hover ~ .zoom-indicator {
+  opacity: 1;
+}
+
+/* Finer views can have a second label row for month context. */
+.time-window-slider-container.month-view .timeline-slider,
+.time-window-slider-container.day-view .timeline-slider,
+.time-window-slider-container.week-view .timeline-slider {
+  height: 50px;
+}
+
+/* Adjust time window slider container for day/week view mode */
+.time-window-slider-container.day-view,
+.time-window-slider-container.week-view {
+  padding-bottom: 14px;
+  height: auto;
+}
+
+
+/* Gray mode (magnitude selected): neutral charcoal — mirrors the magnitude scale's gray bar */
+.timeline-track.gray {
+  background: linear-gradient(to right, #888888, #606060, #444444, #2a2a2a, #1a1a1a);
+}
+
+/* Colored / timeline mode: North Atlantic deep ocean → teal surface.
+   Left = oldest events (deep, dark navy); right = most recent (bright teal-blue).
+   Matches the existing earthquake marker blue palette (#4a6fa5). */
+.timeline-track.colored {
+  background: linear-gradient(
+    to right,
+    #0a1628,
+    #0f2a48,
+    #164068,
+    #1e5a8a,
+    #2874aa,
+    #3590c0,
+    #45add4,
+    #5ec4de,
+    #78d8e8
+  );
+}
+
+/* Satellite timeline mode: high-contrast magenta ramp for imagery basemaps.
+   Left = oldest events; right = most recent. */
+.timeline-track.satellite-colored {
+  background: linear-gradient(
+    to right,
+    #3b063f,
+    #5d0a62,
+    #7f117f,
+    #a31997,
+    #c026a8,
+    #dc3fba,
+    #f065ce,
+    #ff8adb
+  );
+}
+
+.time-window-slider-container.vertical .timeline-track.colored {
+  background: linear-gradient(
+    to left,
+    #0a1628,
+    #0f2a48,
+    #164068,
+    #1e5a8a,
+    #2874aa,
+    #3590c0,
+    #45add4,
+    #5ec4de,
+    #78d8e8
+  );
+}
+
+.time-window-slider-container.vertical .timeline-track.satellite-colored {
+  background: linear-gradient(
+    to left,
+    #3b063f,
+    #5d0a62,
+    #7f117f,
+    #a31997,
+    #c026a8,
+    #dc3fba,
+    #f065ce,
+    #ff8adb
+  );
+}
+
+/* T label: visible only in vertical mode, appears just above the slider's visual top.
+   After rotate(-90deg): CSS right edge = visual top, CSS top direction = visual left.
+   top must match the track bar's CSS-top centre = padding_top(26) + slider_h - track_bottom - track_h/2.
+   Default: 26 + 52 - 10 - 11 = 57px. Override in each responsive block when sizes change. */
+.time-window-slider-container.vertical .vertical-letter-label {
+  position: absolute;
+  right: 6px;
+  top: 51px;
+  transform: rotate(90deg);
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a3a5c;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.timeline-zoom-buttons {
+  display: none;
+}
+
+/* ── Vertical orientation (left-side panel) ── */
+.time-window-slider-container.vertical {
+  width: 380px;
+  max-width: none;
+  /* padding: CSS-top (→ visual right space for labels) = 26px,
+             CSS-right/left (→ visual bottom/top end padding) = 24px,
+             CSS-bottom (→ visual left margin before bar) = 10px
+     total container CSS height = 26 + 52 + 10 = 88px */
+  padding: 26px 24px 10px 24px;
+  bottom: auto;
+  left: -187px;              /* 10% further left */
+  top: calc(50vh - 75px);   /* visual centre = T+44 = 50vh-31 */
+  transform: rotate(-90deg);
+}
+
+/* In heatmap mode the colour toggles are hidden, leaving extra space — shift slider down to re-centre
+   between the map-type control (~46px from top) and the volcano toggle (~100vh-67px from top).
+   visual centre = T+44 = 50vh-10 ≈ midpoint of (46 + 100vh-67) / 2 = 50vh-10.5 */
+.time-window-slider-container.vertical.heatmap-mode {
+  top: calc(50vh - 54px);
+}
+
+/* Give timeline-slider more CSS height (= visual width) so bar + gap + labels all fit */
+.time-window-slider-container.vertical .timeline-slider {
+  height: 52px;
+}
+
+/* Track flush with CSS-bottom → visual LEFT side of the panel, 22px wide */
+.time-window-slider-container.vertical .timeline-track {
+  top: auto;
+  bottom: 10px;
+  height: 22px;
+}
+
+/* Labels near CSS-top → visual RIGHT side of the panel.
+   Bar top edge = 52 - 10 - 22 = 20px from CSS-top; labels at 6px → 14px gap. */
+.time-window-slider-container.vertical .year-labels,
+.time-window-slider-container.vertical .day-labels {
+  top: 6px;
+}
+
+/* In vertical mode, place the date range text in the 20px strip at CSS bottom (= visual right of bar).
+   Track ends at CSS y≈68px; container CSS height = 88px → 20px gap from track to container edge.
+   The element inherits the container's rotate(-90deg), so text reads bottom-to-top automatically. */
+.time-window-slider-container.vertical .selected-date {
+  position: absolute;
+  bottom: 0;
+  /* left: 50% + translateX(-50%) centers the element along the CSS x-axis
+     (= visual y-axis after -90deg rotation), placing the text at the visual
+     vertical midpoint of the slider regardless of container width. */
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: #1a3a5c;
+  letter-spacing: 0.3px;
+  background: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* In vertical mode, CSS top → visual left (off-screen). Move tooltip to CSS bottom → visual right. */
+.time-window-slider-container.vertical .zoom-indicator {
+  top: auto;
+  bottom: -22px;
+}
+
+/* Counter-rotate labels so text reads horizontally. Year/day labels stay on
+   the outside of the bar; month context is placed on the inside below. */
+.time-window-slider-container.vertical .year-label,
+.time-window-slider-container.vertical .day-label {
+  top: -20px;
+  transform: translateX(-50%) rotate(90deg);
+  transform-origin: center center;
+}
+
+.time-window-slider-container.vertical .month-label {
+  /* Put month context on the opposite side of the vertical track so Jan and
+     the YY/YY year-boundary label never overlap. */
+  top: 40px;
+  transform: translateX(-50%) rotate(90deg);
+  transform-origin: center center;
+}
+
+@media (max-width: 767px) {
+  .left-panel__scale-row > .time-window-slider-container.vertical {
+    padding-left: 10px !important;
+    padding-right: 20px !important;
+  }
+
+  .time-window-slider-container.vertical .timeline-zoom-buttons {
+    position: absolute;
+    right: -30px;
+    top: 44px;
+    z-index: 3;
+    display: flex;
+    gap: 0;
+    transform: rotate(90deg);
+    transform-origin: center center;
+    pointer-events: all;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(10, 40, 80, 0.20);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(10, 40, 80, 0.12);
+  }
+
+  .time-window-slider-container.vertical .timeline-zoom-button {
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-right: 1px solid rgba(10, 40, 80, 0.20);
+    border-radius: 0;
+    background: transparent;
+    color: #1a3a5c;
+    box-shadow: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .time-window-slider-container.vertical .timeline-zoom-button:last-child {
+    border-right: 0;
+  }
+
+  .time-window-slider-container.vertical .timeline-zoom-button:active {
+    background: rgba(238, 245, 251, 0.94);
+  }
+}
+
+/* Desktop vertical sizing is intentionally fixed so this control stays anchored
+   to the left panel instead of drifting on TV-sized or ultra-wide displays. */
+/* Left panel: the rotated card's pre-rotation width is its rendered vertical height.
+   Keep it locked to the shared scale row height so it matches MagnitudeScale. */
+.left-panel__scale-row > .time-window-slider-container.vertical {
+  box-sizing: border-box !important;
+  padding-left: 14px;
+  padding-right: 20px;
+  width: 100cqh !important;
+  min-width: 100cqh !important;
+  max-width: 100cqh !important;
+  height: var(--range-card-width) !important;
+  min-height: var(--range-card-width) !important;
+  max-height: var(--range-card-width) !important;
+  left: calc((var(--range-card-width) - 100cqh) / 2) !important;
+  top: calc((100cqh - var(--range-card-width)) / 2) !important;
+  transform: rotate(-90deg) !important;
+  transform-origin: center center !important;
+}
+
+.left-panel__scale-row > .time-window-slider-container.vertical .timeline-slider {
+  width: 100%;
+}

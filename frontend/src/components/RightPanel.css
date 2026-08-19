@@ -1,0 +1,182 @@
+/* ── Right volcano panel ── */
+.right-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  z-index: 1001;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+/* Toggle tab on the left edge of the drawer */
+.right-panel__toggle {
+  order: 1;
+  pointer-events: all;
+  align-self: flex-start;
+  margin-top: calc(var(--safe-top) + 60px); /* clears the top map controls */
+  width: var(--right-panel-toggle-width, 18px);
+  height: 38px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  cursor: pointer;
+  font-size: 9px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: -3px 1px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.right-panel__toggle:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Sliding drawer */
+.right-panel__drawer {
+  order: 2;
+  max-width: var(--right-panel-width, 185px);
+  width: var(--right-panel-width, 185px);
+  height: 100%;
+  overflow: hidden;
+  transition: max-width 0.25s ease;
+  pointer-events: all;
+  flex-shrink: 0;
+}
+
+.right-panel--collapsed .right-panel__drawer {
+  max-width: 0;
+}
+
+/* White card body — height: 100% is essential: constrains to drawer height so overflow-y:auto scrolls within it */
+.right-panel__body {
+  width: var(--right-panel-width, 185px);
+  height: 100%;
+  background: #fff;
+  box-shadow: -3px 0 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: calc(var(--safe-top) + 60px) calc(var(--safe-right) + 14px) calc(var(--safe-bottom) + 40px) 14px; /* clears top controls and the bottom scale */
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Section header label */
+.right-panel__label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #999;
+  user-select: none;
+}
+
+/* Volcano list */
+.right-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Individual volcano row */
+.right-panel__item {
+  background: #f7f7f7;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  color: #333;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.right-panel__item:focus,
+.right-panel__item:focus-visible {
+  outline: none;
+}
+
+.right-panel__item:hover {
+  background: #fff0eb;
+  border-color: #ff9800;
+  color: #c05000;
+}
+
+.right-panel__item--selected {
+  background: #ffe0cc;
+  border-color: #e64a19;
+  color: #c03010;
+  font-weight: 700;
+}
+
+/* ── Height breakpoints: reduce padding/gap on short screens ── */
+@media (max-height: 800px) {
+  .right-panel__body { gap: 6px; padding: calc(var(--safe-top) + 55px) calc(var(--safe-right) + 14px) calc(var(--safe-bottom) + 32px) 14px; }
+  .right-panel__item { padding: 4px 8px; }
+}
+@media (max-height: 700px) {
+  .right-panel__body { gap: 4px; padding: calc(var(--safe-top) + 52px) calc(var(--safe-right) + 12px) calc(var(--safe-bottom) + 28px) 12px; }
+  .right-panel__label { font-size: 9px; letter-spacing: 0.4px; }
+  .right-panel__item { padding: 3px 8px; font-size: 11px; }
+}
+@media (max-height: 620px) {
+  .right-panel__body { gap: 2px; padding: calc(var(--safe-top) + 50px) calc(var(--safe-right) + 10px) calc(var(--safe-bottom) + 24px) 10px; }
+  .right-panel__item { padding: 2px 8px; font-size: 10px; border-radius: 4px; }
+}
+
+@media (max-width: 767px) {
+  .right-panel__toggle {
+    width: var(--right-panel-toggle-width, 16px);
+    height: 34px;
+    margin-top: calc(var(--safe-top) + 52px);
+    font-size: 8px;
+  }
+
+  .right-panel__drawer {
+    max-width: var(--right-panel-width, 136px);
+    width: var(--right-panel-width, 136px);
+  }
+
+  .right-panel__body {
+    width: var(--right-panel-width, 136px);
+    gap: 4px;
+    padding: calc(var(--safe-top) + 48px) calc(var(--safe-right) + 8px) calc(var(--safe-bottom) + 22px) 8px;
+  }
+
+  .right-panel__label {
+    font-size: 8px;
+    letter-spacing: 0.35px;
+  }
+
+  .right-panel__label svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .right-panel__list {
+    gap: 2px;
+  }
+
+  .right-panel__item {
+    padding: 3px 6px;
+    font-size: 10px;
+    border-radius: 4px;
+  }
+}

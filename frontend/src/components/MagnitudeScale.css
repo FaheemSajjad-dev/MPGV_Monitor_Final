@@ -1,0 +1,402 @@
+/* Magnitude Scale with Slider */
+.magnitude-scale.vertical {
+  position: absolute;
+  left: auto;
+  right: 20px;
+  z-index: 1000;
+  bottom: auto;
+  top: 42%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 8px;
+  gap: 12px;
+  height: auto;
+  width: 40px;
+  align-items: center;
+  background: var(--floating-card-bg, #ffffff);
+  border: var(--floating-card-border, 1px solid rgba(10, 40, 80, 0.14));
+  border-radius: var(--floating-card-radius, 8px);
+  box-shadow: var(--floating-card-shadow, 0 1px 6px rgba(10, 40, 80, 0.09));
+}
+
+.scale-container {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scale-bar-vertical {
+  width: 10px;
+  height: calc(100% - 16px); /* 8px thumb radius trimmed from each end */
+  border-radius: 5px;
+  margin: 8px 0;
+  transition: background 160ms ease;
+}
+
+.scale-bar-vertical.scale-bar-colored {
+  background: linear-gradient(to top, #f5a623, #e07030, #c43c28, #8f1a1a, #4a0a0a);
+}
+
+.scale-letter-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: #333;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  margin-bottom: 2px;
+  user-select: none;
+}
+
+.magnitude-scale.vertical .min-value,
+.magnitude-scale.vertical .max-value {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Slider container */
+.slider-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Magnitude Slider */
+.magnitude-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px !important;
+  height: 10px !important;
+  background: transparent;
+  transform-origin: center;
+  position: absolute;
+  z-index: 5;
+}
+
+.magnitude-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #333;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
+  margin-top: -5px;
+}
+
+.magnitude-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #333;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
+}
+
+.magnitude-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  background: transparent;
+  border-radius: 0;
+}
+
+.magnitude-slider::-moz-range-track {
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  background: transparent;
+  border-radius: 0;
+}
+
+
+.magnitude-scale.vertical,
+.magnitude-scale.vertical:focus,
+.magnitude-scale.vertical:focus-visible,
+.scale-container,
+.scale-container:focus,
+.scale-container:focus-visible,
+.slider-container,
+.slider-container:focus,
+.slider-container:focus-visible,
+.magnitude-slider,
+.magnitude-slider:focus,
+.magnitude-slider:focus-visible,
+.magnitude-slider:active {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.magnitude-slider::-moz-focus-outer {
+  border: 0;
+}
+
+.magnitude-slider:focus::-webkit-slider-thumb,
+.magnitude-slider:focus-visible::-webkit-slider-thumb,
+.magnitude-slider:active::-webkit-slider-thumb {
+  outline: none;
+}
+
+.magnitude-slider:focus::-moz-range-thumb,
+.magnitude-slider:focus-visible::-moz-range-thumb,
+.magnitude-slider:active::-moz-range-thumb {
+  outline: none;
+}
+/* Current Filter Value */
+.current-filter {
+  position: absolute;
+  left: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  padding: 2px 3px;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.current-filter span {
+  color: #333;
+}
+
+/* Desktop vertical sizing is intentionally fixed so the scale remains visually
+   attached to the left panel on large monitors and TV-sized displays. */
+
+/* --- Dynamic color modes for the vertical bar --- */
+.scale-bar-vertical.scale-bar-gray {
+  background: linear-gradient(to top, #666666, #444444, #1a1a1a);
+}
+
+.magnitude-scale.horizontal {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--floating-card-bg, #ffffff);
+  border: var(--floating-card-border, 1px solid rgba(10, 40, 80, 0.14));
+  border-radius: var(--floating-card-radius, 8px);
+  box-shadow: var(--floating-card-shadow, 0 1px 6px rgba(10, 40, 80, 0.09));
+  box-sizing: border-box;
+}
+
+.magnitude-scale.horizontal .scale-letter-label {
+  order: 1;
+}
+
+.magnitude-scale.horizontal .min-value {
+  order: 2;
+}
+
+.magnitude-scale.horizontal .scale-container {
+  order: 3;
+}
+
+.magnitude-scale.horizontal .max-value {
+  order: 4;
+}
+
+.magnitude-scale.horizontal .scale-container {
+  height: 46px;
+  min-width: 0;
+  width: 100%;
+}
+
+.magnitude-scale.horizontal .scale-bar-vertical {
+  width: 100%;
+  height: 10px;
+  margin: 0;
+  border-radius: 5px;
+}
+
+.magnitude-scale.horizontal .scale-bar-vertical.scale-bar-colored {
+  background: linear-gradient(to right, #f5a623, #e07030, #c43c28, #8f1a1a, #4a0a0a);
+}
+
+.magnitude-scale.horizontal .scale-bar-vertical.scale-bar-gray {
+  background: linear-gradient(to right, #666666, #444444, #1a1a1a);
+}
+
+.magnitude-scale.horizontal .magnitude-slider {
+  width: 100% !important;
+}
+
+.magnitude-scale.horizontal .current-filter {
+  top: 30px;
+  font-size: 10px;
+}
+
+.magnitude-scale.horizontal .current-filter span {
+  flex-direction: column;
+}
+
+.left-panel .magnitude-scale.vertical {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  grid-template-rows: 20px minmax(0, 1fr);
+  width: var(--range-card-width);
+  height: var(--range-card-height);
+  padding: 0 8px 14px;
+  gap: 0 2px;
+  align-items: center;
+  justify-items: center;
+  box-sizing: border-box;
+}
+
+.left-panel .magnitude-scale.vertical .scale-letter-label {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-size: 15px;
+}
+
+.left-panel .magnitude-scale.vertical .max-value {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
+}
+
+.left-panel .magnitude-scale.vertical .min-value {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: end;
+}
+
+.left-panel .magnitude-scale.vertical .scale-container {
+  grid-column: 2;
+  grid-row: 2;
+  height: 100%;
+  width: 100%;
+}
+
+.left-panel .magnitude-scale.vertical .scale-bar-vertical {
+  width: 20px;
+  height: 100%;
+  margin: 0;
+}
+
+.left-panel .magnitude-scale.vertical .current-filter {
+  left: 86%;
+}
+
+.left-panel .magnitude-scale.vertical .magnitude-slider {
+  width: var(--magnitude-slider-length, 200px) !important;
+  left: 50% !important;
+  top: 50% !important;
+}
+
+.left-panel .magnitude-scale.vertical .magnitude-tick-label {
+  position: absolute;
+  right: calc(100% - 12px);
+  transform: translateY(-50%);
+  color: #333;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 12;
+}
+
+@media (max-width: 767px) {
+  .magnitude-scale.vertical {
+    width: 34px;
+    padding: 11px 6px;
+    gap: 8px;
+  }
+
+  .scale-container {
+    height: 160px;
+  }
+
+  .scale-bar-vertical {
+    width: 8px;
+  }
+
+  .scale-letter-label {
+    font-size: 11px;
+  }
+
+  .magnitude-scale.vertical .min-value,
+  .magnitude-scale.vertical .max-value {
+    font-size: 10px;
+  }
+
+  .magnitude-slider {
+    width: 160px !important;
+    height: 8px !important;
+  }
+
+  .magnitude-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .magnitude-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+
+  .current-filter {
+    left: 40px;
+    font-size: 8px;
+  }
+
+  .left-panel .magnitude-scale.vertical {
+    width: var(--range-card-width);
+    height: var(--range-card-height);
+    padding: 0 6px 10px;
+    grid-template-columns: 14px minmax(0, 1fr);
+  }
+
+  .left-panel .magnitude-scale.vertical .scale-container {
+    height: 100%;
+  }
+
+
+  .left-panel .magnitude-scale.vertical .magnitude-slider {
+    width: var(--magnitude-slider-length, 160px) !important;
+  }
+  .left-panel .magnitude-scale.vertical .magnitude-slider {
+    height: 8px !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+  }
+
+  .left-panel .magnitude-scale.vertical .magnitude-slider::-webkit-slider-runnable-track {
+    height: 8px;
+  }
+
+  .left-panel .magnitude-scale.vertical .magnitude-slider::-moz-range-track {
+    height: 8px;
+  }
+
+  .left-panel .magnitude-scale.vertical .magnitude-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    margin-top: -4px;
+  }
+
+  .left-panel .magnitude-scale.vertical .magnitude-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+}
